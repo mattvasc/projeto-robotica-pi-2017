@@ -87,6 +87,7 @@ def run_quickstart():
 	print('Labels:')
 	for label in labels:
 		print(label.description)
+		print(label.score)
 	# [END vision_quickstart]
 
 if __name__ == "__main__":
