@@ -10,8 +10,13 @@ import io
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
+from google.cloud import vision
+from google.cloud.vision import types
+import serial
 
+ser = serial.Serial('/dev/ttyACM0')
 camera = ""
+
 def mse(imageA, imageB):
 	# the 'Mean Squared Error' between the two images is the
 	# sum of the squared difference between the two images;
@@ -30,6 +35,7 @@ def comparar(imageA, imageB):
 		return True
 	else:
 		return False
+
 def get_image():
 	global camera
  	# read is the easiest way to get a full image out of a VideoCapture object.
@@ -61,17 +67,12 @@ def tirar_foto(ramp_frames = 30):
 	del(camera)
 	return camera_capture
 
-def run_quickstart():
-	# [START vision_quickstart]
-	# Imports the Google Cloud client library
-	# [START migration_import]
-	from google.cloud import vision
-	from google.cloud.vision import types
-	# [END migration_import]
-	# Instantiates a client
+def enviar_para_googlevision():
+
 	# [START migration_client]
 	client = vision.ImageAnnotatorClient()
 	# [END migration_client]
+
 	# The name of the image file to annotate
 	file_name = os.path.join(os.path.dirname(__file__), 'atual.jpg')
 
@@ -85,11 +86,42 @@ def run_quickstart():
 	response = client.label_detection(image=image)
 	labels = response.label_annotations
 
-	print('Labels:')
-	for label in labels:
-		print(label.description)
-		print(label.score)
-	# [END vision_quickstart]
+	return labels
+	# print('Labels:')
+	# for label in labels:
+	# 	print(label.description)
+	# 	print(label.score)
+
+def separar_material(labels):
+
+	banco = open("banco.txt", "a")
+	
+	for l in labels:
+		print(l)
+
+		banco.write(l.description + "\n")
+		
+		if "paper" in l.description:
+			print("PAPEL!")
+			ser.write('1')
+		else if "plastic" in l.description:
+			print("PLASTICO!")
+			ser.write('2')
+		else if "aluminum" in l.description:
+			print("ALUMINIO!")
+			ser.write('3')
+		else if "glass" in l.description:
+			print("VIDRO!")
+			ser.write('4')
+		else if "food" in l.description:
+			print("ORGANICO!")
+			ser.write('5')
+		else:
+			print("Não reconhecido")
+	banco.write("\n")
+	banco.close()
+
+
 
 if __name__ == "__main__":
 	print("Capturando base:")
@@ -107,8 +139,9 @@ if __name__ == "__main__":
 			print("Comparando a foto com a última:")
 			if(comparar(atualgray,antigagray)):
 				cv2.imwrite("atual.jpg", atual)
-				print("ENVIA PRO WATSUM")
-				run_quickstart()
+				print("ENVIANDO PARA O GOOGLE VISION...")
+				labels = enviar_para_googlevision()
+				separar_material(labels)
 
 			else:
 				print("NA PRÓXIMA EU ENVIO")
