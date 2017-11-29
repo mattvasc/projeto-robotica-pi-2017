@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # USAGE
-# python compare.py
+# python projeto.py
 
 # import the necessary packages
 import skimage.measure
@@ -12,10 +12,14 @@ import numpy as np
 import cv2
 from google.cloud import vision
 from google.cloud.vision import types
-import serial
+import json
+import sys
+# import serial
 
-ser = serial.Serial('/dev/ttyACM0')
+# ser = serial.Serial('/dev/ttyACM0')
 camera = ""
+with open('DB.json') as json_data:
+    database = json.load(json_data)
 
 def mse(imageA, imageB):
 	# the 'Mean Squared Error' between the two images is the
@@ -95,29 +99,42 @@ def enviar_para_googlevision():
 def separar_material(labels):
 
 	banco = open("banco.txt", "a")
-	
-	for l in labels:
-		print(l)
 
-		banco.write(l.description + "\n")
-		
-		if "paper" in l.description:
+	for l in labels:
+		# print(l)
+
+		banco.write(l.description + " " + str(l.score) + "\n")
+		reconheceu = False
+
+		if l.description in database['PAPER']:
+			reconheceu = True
 			print("PAPEL!")
-			ser.write('1')
-		else if "plastic" in l.description:
+			# ser.write('1')
+			break
+		elif l.description in database['PLASTIC']:
+			reconheceu = True
 			print("PLASTICO!")
-			ser.write('2')
-		else if "aluminum" in l.description:
-			print("ALUMINIO!")
-			ser.write('3')
-		else if "glass" in l.description:
+			# ser.write('2')
+			break
+		elif l.description in database['METAL']:
+			reconheceu = True
+			print("METAL!")
+			# ser.write('3')
+			break
+		elif l.description in database['GLASS']:
+			reconheceu = True
 			print("VIDRO!")
-			ser.write('4')
-		else if "food" in l.description:
+			# ser.write('4')
+			break
+		elif l.description in database['ORGANIC']:
+			reconheceu = True
 			print("ORGANICO!")
-			ser.write('5')
-		else:
-			print("Não reconhecido")
+			# ser.write('5')
+			break
+
+	if not reconheceu:
+		print("Não reconhecido")
+
 	banco.write("\n")
 	banco.close()
 

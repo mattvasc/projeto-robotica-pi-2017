@@ -1,0 +1,45 @@
+{
+"PAPER":
+  [ "paper",
+    "notebook",
+    "magazine",
+    "poster",
+    "newspaper"
+  ],
+
+"PLASTIC":
+  [ "plastic",
+    "plastic bottle",
+    "prepackaged meal"
+  ],
+
+"METAL":
+  [ "metal",
+    "aluminum",
+    "electronics",
+    "technology",
+    "electronic device",
+    "mobile phone",
+    "portable media player",
+    "aluminum can",
+    "tin can",
+    "spray",
+    "hardware",
+    "battery",
+    "electronics accessory"
+  ],
+
+"GLASS":
+  [ "glass",
+    "glass bottle",
+    "beer bottle",
+    "nail care"
+  ],
+
+"ORGANIC":
+  [ "food",
+    "natural foods",
+    "fruit",
+    "snack"
+  ]
+}
