@@ -14,12 +14,14 @@ from google.cloud import vision
 from google.cloud.vision import types
 import json
 import sys
+import datetime
+import pygame
+import pygame.camera
 # import serial
 
 # ser = serial.Serial('/dev/ttyACM0')
 camera = ""
-with open('DB.json') as json_data:
-    database = json.load(json_data)
+
 
 def mse(imageA, imageB):
 	# the 'Mean Squared Error' between the two images is the
@@ -42,32 +44,18 @@ def comparar(imageA, imageB):
 
 def get_image():
 	global camera
- 	# read is the easiest way to get a full image out of a VideoCapture object.
- 	retval, im = camera.read()
- 	return im
+	retval,im = camera.read()
+	return im
 
-def tirar_foto(ramp_frames = 30):
+def tirar_foto(ramp_frames = 5):
 	global camera
-	# Camera 0 is the integrated web cam on my netbook
-	camera_port = 0
-	#Number of frames to throw away while the camera adjusts to light levels
-	# Now we can initialize the camera capture object with the cv2.VideoCapture class.
-	# All it needs is the index to a camera port.
 	camera = cv2.VideoCapture(camera_port)
-	# Captures a single image from the camera and returns it in PIL format
-	# Ramp the camera - these frames will be discarded and are only used to allow v4l2
-	# to adjust light levels, if necessary
-	for i in xrange(ramp_frames):
-	 temp = get_image()
+	for i in range(ramp_frames):
+		get_image()
 	print("Tirando foto...")
-	# Take the actual image we want to keep
+	pygame.mixer.music.load("camera.mp3")
+	pygame.mixer.music.play()
 	camera_capture = get_image()
-	file = "atual.png"
-	# A nice feature of the imwrite method is that it will automatically choose the
-	# correct format based on the file extension you provide. Convenient!
-	#cv2.imwrite(file, camera_capture)
-	# You'll want to release the camera, otherwise you won't be able to create a new
-	# capture object until your script exits
 	del(camera)
 	return camera_capture
 
@@ -78,7 +66,7 @@ def enviar_para_googlevision():
 	# [END migration_client]
 
 	# The name of the image file to annotate
-	file_name = os.path.join(os.path.dirname(__file__), 'atual.jpg')
+	file_name = os.path.join(os.path.dirname(__file__), 'atual.png')
 
 	# Loads the image into memory
 	with io.open(file_name, 'rb') as image_file:
@@ -133,29 +121,97 @@ def separar_material(labels):
 			break
 
 	if not reconheceu:
-		print("Não reconhecido")
+		print("Não reconhecemos o objeto atual")
+		now = datetime.datetime.now()
+		nome_arquivo = "nreconhecido_" + str(now.hour) + "_" + str(now.minute) + ".png"
+		os.rename("atual.png", nome_arquivo)
+		print("Salvamos a imagem não reconhecida como " + nome_arquivo)
+		img = cv2.imread(nome_arquivo, 1)
+		cv2.imshow('Imagem nao reconhecida - hit any key to exit', img)
+		cv2.waitKey(0)
+		cv2.destroyAllWindows()
+		resposta = raw_input("Gostaria de adicionar a classificação desse objeto para algum material? (s/n) ")
 
+		while resposta != "s" and resposta != "n":
+			print("Desculpa, não entendi, vamos tentar novamente")
+			resposta = raw_input("Gostaria de adicionar a classificação desse objeto para algum material? (s/n) ")
+
+		if(resposta=="s"):
+			print("A qual material o objeto pertence?")
+			resposta = raw_input("1 - Papel\n2 - Plástico\n3 - Metal\n4 - Vidro\n5 - Orgânico\n\nInforme a opção: ")
+
+			while (resposta != "1" and resposta != "2" and resposta != "3" and resposta != "4" and resposta != "5") :
+				print("Desculpa, não entendi, vamos tentar novamente")
+				print("A qual material o objeto pertence?")
+				resposta = raw_input("1 - Papel\n2 - Plástico\n3 - Metal\n4 - Vidro\n5 - Orgânico\n\nInforme a opção: ")
+			
+			if(resposta == "1"):
+				selecionado = "PAPER"
+			elif (resposta== "2"):
+				selecionado = "PLASTIC"
+			elif (resposta=="3"):
+				selecionado = "METAL"
+			elif (resposta == "4"):
+				selecionado = "GLASS"
+			else:
+				selecionado = "ORGANIC"
+
+			print("\nAgora precisamos que você selecione das tags retornadas,\nquais são importantes para a classificação!")
+			print("\nPara cada tag, digite 's' para adicionar ao\nclassificador ou 'n' para ir a próxima.\n")
+			
+			for l in labels:
+				resposta = raw_input("Deseja adicionar a categoria a tag: " +l.description+" (s/N): ")
+				if(resposta.lower() == "s"  or resposta.lower() == "y"):
+					database[selecionado].append(l.description)
+			
+			with open('DB.json', 'w') as outfile:
+				json.dump(database, outfile, indent=2, sort_keys=True)
+
+			print("\nPronto, tags adicionada a categoria com sucesso!")
+				
+		elif (resposta=="n"):
+			print("Ok, então apagamos a imagem da pasta")
+			os.unlink(nome_arquivo)
+
+		print("Continuando a execução do programa!")
 	banco.write("\n")
 	banco.close()
 
 
 
 if __name__ == "__main__":
+	global camera_port
+	print("Iniciando Módulos...")
+	pygame.init()
+	pygame.camera.init()
+	print("Buscando câmeras disponíveis...")
+	camlist = pygame.camera.list_cameras()
+	camera_port = 0
+	if( len(camlist) > 1):
+		print("Temos as seguintes câmeras disponíveis:")
+		print(camlist)
+		camera_port = input("Digite o índice vetorial da qual deseja usar: ")
+	camera_port = int(camera_port)
+
+	with open('DB.json') as json_data:
+		database = json.load(json_data)
+
 	print("Capturando base:")
-	base = tirar_foto(50)
+	
+	base = tirar_foto()
 	basegray = cv2.cvtColor(base, cv2.COLOR_BGR2GRAY)
-	atual = tirar_foto(30)
+	atual = tirar_foto()
 	atualgray = cv2.cvtColor(atual, cv2.COLOR_BGR2GRAY)
 	while 1:
 		antiga = atual
 		antigagray = atualgray
-		atual = tirar_foto(30)
+		atual = tirar_foto()
 		atualgray = cv2.cvtColor(atual, cv2.COLOR_BGR2GRAY)
 		print("Comparando foto com a base:")
 		if(not comparar(basegray, atualgray)):
 			print("Comparando a foto com a última:")
 			if(comparar(atualgray,antigagray)):
-				cv2.imwrite("atual.jpg", atual)
+				cv2.imwrite("atual.png", atual)
 				print("ENVIANDO PARA O GOOGLE VISION...")
 				labels = enviar_para_googlevision()
 				separar_material(labels)
