@@ -47,17 +47,26 @@ def get_image():
 	retval,im = camera.read()
 	return im
 
-def tirar_foto(ramp_frames = 5):
+def tirar_foto(ramp_frames = 3):
 	global camera
-	camera = cv2.VideoCapture(camera_port)
+	global camera_port
+	global camlist
+	camera = pygame.camera.Camera(camlist[camera_port])
+	camera.start()
+	#camera = cv2.VideoCapture(camera_port)
 	for i in range(ramp_frames):
-		get_image()
+		camera.get_image()
 	print("Tirando foto...")
-	pygame.mixer.music.load("camera.mp3")
-	pygame.mixer.music.play()
-	camera_capture = get_image()
+	#pygame.mixer.music.load("camera.mp3")
+	#pygame.mixer.music.play()
+	img = camera.get_image()
+	#camera_capture = get_image()
+	pygame.image.save(img, "temp.png")
+	img = cv2.imread("temp.png",1)
+	os.unlink("temp.png")
+	camera.stop()
 	del(camera)
-	return camera_capture
+	return img
 
 def enviar_para_googlevision():
 
@@ -77,7 +86,7 @@ def enviar_para_googlevision():
 	# Performs label detection on the image file
 	response = client.label_detection(image=image)
 	labels = response.label_annotations
-
+	#os.unlink("atual.png")
 	return labels
 	# print('Labels:')
 	# for label in labels:
@@ -181,6 +190,7 @@ def separar_material(labels):
 
 if __name__ == "__main__":
 	global camera_port
+	global camlist
 	print("Iniciando Módulos...")
 	pygame.init()
 	pygame.camera.init()
