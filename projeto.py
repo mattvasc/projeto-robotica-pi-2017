@@ -17,6 +17,7 @@ import sys
 import datetime
 import pygame
 import pygame.camera
+from time import sleep
 # import serial
 
 # ser = serial.Serial('/dev/ttyACM0')
@@ -105,27 +106,32 @@ def separar_material(labels):
 
 		if l.description in database['PAPER']:
 			reconheceu = True
-			print("PAPEL!")
+			print("\n\tPAPEL!\n")
+			sleep(3)
 			# ser.write('1')
 			break
 		elif l.description in database['PLASTIC']:
 			reconheceu = True
-			print("PLASTICO!")
+			print("\n\tPLASTICO!\n")
+			sleep(3)
 			# ser.write('2')
 			break
 		elif l.description in database['METAL']:
 			reconheceu = True
-			print("METAL!")
+			print("\n\tMETAL!\n")
+			sleep(3)
 			# ser.write('3')
 			break
 		elif l.description in database['GLASS']:
 			reconheceu = True
-			print("VIDRO!")
+			print("\n\tVIDRO!\n")
+			sleep(3)
 			# ser.write('4')
 			break
 		elif l.description in database['ORGANIC']:
 			reconheceu = True
-			print("ORGANICO!")
+			print("\n\tORGANICO!\n")
+			sleep(3)
 			# ser.write('5')
 			break
 
@@ -215,6 +221,7 @@ if __name__ == "__main__":
 	while 1:
 		antiga = atual
 		antigagray = atualgray
+		sleep(0.5)
 		atual = tirar_foto()
 		atualgray = cv2.cvtColor(atual, cv2.COLOR_BGR2GRAY)
 		print("Comparando foto com a base:")
