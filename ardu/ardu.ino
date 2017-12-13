@@ -11,13 +11,13 @@ void setup()
 	Serial.begin(9600);    
 
 	/*Setting startup values just for safeness*/
-	digitalWrite(8, low);
-	digitalWrite(10, low);
-	digitalWrite(12, low);
+	digitalWrite(8, LOW);
+	digitalWrite(10, LOW);
+	digitalWrite(12, LOW);
 	
 	/*Moving back the striker if needed*/
 	delay(100);
-	digitalWrite(10,HIGH);
+	//digitalWrite(10,HIGH);
 	delay(400);
 	digitalWrite(10, LOW);
 
@@ -41,7 +41,7 @@ void aciona_batedor()
 		NA: + 
 		coil p12
 
-  */
+  
 	Serial.println("Acionando Batedor...");
 	Serial.println("Indo");
 	digitalWrite(12, HIGH);
@@ -52,6 +52,7 @@ void aciona_batedor()
 	digitalWrite(10,HIGH);
 	delay(400);
 	digitalWrite(10, LOW);
+  */
 }
 
 
@@ -65,31 +66,68 @@ void loop()
 		switch (incomingByte)
 		{
 			case 1:
-				Serial.println("PAPEL");
+				Serial.println("VIDRO");
 				digitalWrite(8, HIGH);
-				delay(1000);
+				delay(180);
 				digitalWrite(8, LOW);
 				aciona_batedor();
 				break;
 			case 2:
-				Serial.println("PRASTICO");
-				digitalWrite(8, HIGH);
-				delay(2000);
-				digitalWrite(8, LOW);
-				aciona_batedor();
-				break;
-			case 3:
 				Serial.println("METAL");
 				digitalWrite(8, HIGH);
-				delay(3000);
+				delay(180);
 				digitalWrite(8, LOW);
-				aciona_batedor();
+       digitalWrite(8, HIGH);
+       delay(180);
+        digitalWrite(8, LOW);
+        digitalWrite(8, HIGH);
+        delay(200);
+        digitalWrite(8, LOW);
+        aciona_batedor();
+				break;
+			case 3:
+				Serial.println("PLASTICO");
+				digitalWrite(8, HIGH);
+				delay(180);
+				digitalWrite(8, LOW);
+				digitalWrite(8, HIGH);
+        delay(180);
+        digitalWrite(8, LOW);
+        digitalWrite(8, HIGH);
+        delay(180);
+        digitalWrite(8, LOW);
+        digitalWrite(8, HIGH);
+        delay(180);
+        digitalWrite(8, LOW);
+        digitalWrite(8, HIGH);
+        delay(210);
+        digitalWrite(8, LOW);
+        aciona_batedor();
 				break;
 			case 4:
-				Serial.println("Vidro");
+				Serial.println("PAPEL");
 				digitalWrite(8, HIGH);
-				delay(4000);
+				delay(180);
 				digitalWrite(8, LOW);
+				digitalWrite(8, HIGH);
+        delay(180);
+        digitalWrite(8, LOW);
+        digitalWrite(8, HIGH);
+        delay(180);
+        digitalWrite(8, LOW);
+        digitalWrite(8, HIGH);
+        delay(180);
+        digitalWrite(8, LOW);
+        digitalWrite(8, HIGH);
+        delay(180);
+        digitalWrite(8, LOW);
+        digitalWrite(8, HIGH);
+        delay(180);
+        digitalWrite(8, LOW);
+        digitalWrite(8, HIGH);
+        delay(180);
+        digitalWrite(8, LOW);
+        
 				aciona_batedor();
 				break;
 			case 5:
