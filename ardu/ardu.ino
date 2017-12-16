@@ -41,18 +41,21 @@ void aciona_batedor()
 		NA: + 
 		coil p12
 
+  */
+
+  delay(1000);
   
 	Serial.println("Acionando Batedor...");
 	Serial.println("Indo");
 	digitalWrite(12, HIGH);
-	delay(500);
+	delay(300);
 	digitalWrite(12, LOW);
 	delay(100);
 	Serial.print(" Voltando\n");
 	digitalWrite(10,HIGH);
-	delay(400);
+	delay(300);
 	digitalWrite(10, LOW);
-  */
+//  */
 }
 
 
@@ -81,7 +84,7 @@ void loop()
        delay(180);
         digitalWrite(8, LOW);
         digitalWrite(8, HIGH);
-        delay(200);
+        delay(450);
         digitalWrite(8, LOW);
         aciona_batedor();
 				break;
@@ -100,7 +103,10 @@ void loop()
         delay(180);
         digitalWrite(8, LOW);
         digitalWrite(8, HIGH);
-        delay(210);
+        delay(180);
+        digitalWrite(8, LOW);
+        digitalWrite(8, HIGH);
+        delay(150);
         digitalWrite(8, LOW);
         aciona_batedor();
 				break;
@@ -125,7 +131,7 @@ void loop()
         delay(180);
         digitalWrite(8, LOW);
         digitalWrite(8, HIGH);
-        delay(180);
+        delay(300);
         digitalWrite(8, LOW);
         
 				aciona_batedor();
@@ -135,7 +141,7 @@ void loop()
 				digitalWrite(8, HIGH);
 				delay(5000);
 				digitalWrite(8, LOW);
-				aciona_batedor();
+//				aciona_batedor();
 				break;
 			default:
 				Serial.println("Num te entendi moço");
