@@ -1,3 +1,4 @@
+
 int incomingByte = 0;   // for incoming serial data
 
 void setup() 
@@ -17,7 +18,7 @@ void setup()
 	
 	/*Moving back the striker if needed*/
 	delay(100);
-	//digitalWrite(10,HIGH);
+	digitalWrite(10,HIGH);
 	delay(400);
 	digitalWrite(10, LOW);
 
@@ -42,20 +43,16 @@ void aciona_batedor()
 		coil p12
 
   */
-
-  delay(1000);
-  
 	Serial.println("Acionando Batedor...");
 	Serial.println("Indo");
 	digitalWrite(12, HIGH);
-	delay(300);
+	delay(500);
 	digitalWrite(12, LOW);
 	delay(100);
 	Serial.print(" Voltando\n");
 	digitalWrite(10,HIGH);
-	delay(300);
+	delay(400);
 	digitalWrite(10, LOW);
-//  */
 }
 
 
@@ -69,79 +66,52 @@ void loop()
 		switch (incomingByte)
 		{
 			case 1:
-				Serial.println("VIDRO");
+				Serial.println("PAPEL");
 				digitalWrite(8, HIGH);
-				delay(180);
+				delay(360);
 				digitalWrite(8, LOW);
 				aciona_batedor();
 				break;
 			case 2:
-				Serial.println("METAL");
+				Serial.println("PRASTICO");
 				digitalWrite(8, HIGH);
-				delay(180);
+				delay(200);
 				digitalWrite(8, LOW);
+        delay(70);
        digitalWrite(8, HIGH);
-       delay(180);
+       delay(200);
         digitalWrite(8, LOW);
-        digitalWrite(8, HIGH);
-        delay(450);
+				delay(70);
+       digitalWrite(8, HIGH);
+       delay(200);
         digitalWrite(8, LOW);
-        aciona_batedor();
-				break;
-			case 3:
-				Serial.println("PLASTICO");
-				digitalWrite(8, HIGH);
-				delay(180);
-				digitalWrite(8, LOW);
-				digitalWrite(8, HIGH);
-        delay(180);
-        digitalWrite(8, LOW);
-        digitalWrite(8, HIGH);
-        delay(180);
-        digitalWrite(8, LOW);
-        digitalWrite(8, HIGH);
-        delay(180);
-        digitalWrite(8, LOW);
-        digitalWrite(8, HIGH);
-        delay(180);
-        digitalWrite(8, LOW);
-        digitalWrite(8, HIGH);
-        delay(150);
-        digitalWrite(8, LOW);
-        aciona_batedor();
-				break;
-			case 4:
-				Serial.println("PAPEL");
-				digitalWrite(8, HIGH);
-				delay(180);
-				digitalWrite(8, LOW);
-				digitalWrite(8, HIGH);
-        delay(180);
-        digitalWrite(8, LOW);
-        digitalWrite(8, HIGH);
-        delay(180);
-        digitalWrite(8, LOW);
-        digitalWrite(8, HIGH);
-        delay(180);
-        digitalWrite(8, LOW);
-        digitalWrite(8, HIGH);
-        delay(180);
-        digitalWrite(8, LOW);
-        digitalWrite(8, HIGH);
-        delay(180);
-        digitalWrite(8, LOW);
-        digitalWrite(8, HIGH);
-        delay(300);
+        delay(70);
+       digitalWrite(8, HIGH);
+       delay(200);
         digitalWrite(8, LOW);
         
+				aciona_batedor();
+				break;
+			case 3:
+				Serial.println("METAL");
+				digitalWrite(8, HIGH);
+				delay(1020);
+				digitalWrite(8, LOW);
+				aciona_batedor();
+				break;
+			case 4:
+				Serial.println("Vidro");
+				digitalWrite(8, HIGH);
+				delay(1300);
+				digitalWrite(8, LOW);
 				aciona_batedor();
 				break;
 			case 5:
 				Serial.println("Organico");
 				digitalWrite(8, HIGH);
-				delay(5000);
+				delay(2500);
 				digitalWrite(8, LOW);
-//				aciona_batedor();
+				//aciona_batedor();
 				break;
 			default:
 				Serial.println("Num te entendi moço");

@@ -18,9 +18,9 @@ import datetime
 import pygame
 import pygame.camera
 from time import sleep
-# import serial
+import serial
 
-# ser = serial.Serial('/dev/ttyACM0')
+ser = serial.Serial('/dev/ttyACM0')
 camera = ""
 
 
@@ -108,34 +108,35 @@ def separar_material(labels):
 			reconheceu = True
 			print("\n\tPAPEL!\n")
 			sleep(3)
-			# ser.write('1')
+			ser.write('4')
 			break
 		elif l.description in database['PLASTIC']:
 			reconheceu = True
 			print("\n\tPLASTICO!\n")
 			sleep(3)
-			# ser.write('2')
+			ser.write('3')
 			break
 		elif l.description in database['METAL']:
 			reconheceu = True
 			print("\n\tMETAL!\n")
 			sleep(3)
-			# ser.write('3')
+			ser.write('2')
 			break
 		elif l.description in database['GLASS']:
 			reconheceu = True
 			print("\n\tVIDRO!\n")
 			sleep(3)
-			# ser.write('4')
+			ser.write('1')
 			break
 		elif l.description in database['ORGANIC']:
 			reconheceu = True
 			print("\n\tORGANICO!\n")
 			sleep(3)
-			# ser.write('5')
+			ser.write('5')
 			break
 
 	if not reconheceu:
+		ser.write('6')
 		print("Não reconhecemos o objeto atual")
 		now = datetime.datetime.now()
 		nome_arquivo = "nreconhecido_" + str(now.hour) + "_" + str(now.minute) + ".png"
